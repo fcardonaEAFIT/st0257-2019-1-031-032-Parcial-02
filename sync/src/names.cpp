@@ -1,2 +1,2 @@
 
-const char *names[] = { "nontabacco", "nopaper", "nomatch", "syncagent" };
+const char *names[] = { "nontobacco", "nopaper", "nomatch", "syncagent" };
