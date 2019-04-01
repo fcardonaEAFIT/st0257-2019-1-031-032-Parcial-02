@@ -1,4 +1,5 @@
 #pragma once
+#include "isync.h"
+#include <semaphore.h>
 
-#define nSEM 4
-extern const char *names[];
+
