@@ -9,7 +9,7 @@ using namespace std;
 
 int
 main(void) {
-  Sync *sem[nSEM];
+  ISync *sem[nSEM];
 
   for (int i = 0; i < nSEM; ++i) {
     try {

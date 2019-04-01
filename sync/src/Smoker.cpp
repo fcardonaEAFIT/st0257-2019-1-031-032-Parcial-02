@@ -8,16 +8,16 @@ using namespace std;
 
 static void usage(const char*);
 static void smoker(const char *,
-		   Sync *,
-		   Sync *);
+		   ISync *,
+		   ISync *);
 
 int
 main(int argc, const char *argv[]) {
 
   if (argc != 3) usage(argv[0]);
 
-  Sync *semwait = nullptr;
-  Sync *semagent = nullptr;
+  ISync *semwait = nullptr;
+  ISync *semagent = nullptr;
 
   try {
     semwait = Sync::open(argv[1]);
@@ -41,8 +41,8 @@ static void usage(const char* progname) {
 }
 
 static void smoker(const char *nombre,
-		   Sync *semwait,
-		   Sync *semagent) {
+		   ISync *semwait,
+		   ISync *semagent) {
 
   for (;;) {
     semwait->wait();

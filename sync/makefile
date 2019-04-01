@@ -1,36 +1,55 @@
 SRCDIR   := src
 BUILDDIR := build
+INCLUDE  := include
+BINDIR   := bin
 LDFLAGS  := -pthread
-CXXFLAGS := -pedantic-errors -Wall -Wextra -Werror -std=c++11 -I include
+CXXFLAGS := -pedantic-errors -Wall -Wextra -std=c++11 -I include
 
+all: dirs $(BINDIR)/CreateSemSmokers $(BINDIR)/DeleteSemSmokers $(BINDIR)/Smoker $(BINDIR)/Agent
 
-all: CreateSemSmokers DeleteSemSmokers Smoker Agent
+VPATH := src include build
 
-VPATH=src
-
-CreateSemSmokers: CreateSemSmokers.o names.o sync.o
+$(BINDIR)/CreateSemSmokers: CreateSemSmokers.o names.o sync.o isync.o
 	$(CXX) -o $@ $(LDFLAGS) $^
 
-CreateSemSmokers.o: CreateSemSmokers.cpp ../include/names.h ../include/sync.h
+$(BUILDDIR)/CreateSemSmokers.o: CreateSemSmokers.cpp names.h sync.h isync.h
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
 
-names.o: names.cpp ../include/names.h
-
-sync.o: sync.cpp ../include/sync.h
-
-DeleteSemSmokers: DeleteSemSmokers.o names.o sync.o
+$(BINDIR)/DeleteSemSmokers: DeleteSemSmokers.o names.o sync.o isync.o
 	$(CXX) -o $@ $(LDFLAGS) $^
 
-DeleteSemSmokers.o: DeleteSemSmokers.cpp ../include/names.h ../include/sync.h
-
-Smoker: Smoker.o sync.o
+$(BINDIR)/Agent: Agent.o names.o sync.o isync.o
 	$(CXX) -o $@ $(LDFLAGS) $^
 
-Smoker.o: Smoker.cpp ../include/sync.h
-
-Agent: Agent.o names.o sync.o
+$(BINDIR)/Smoker: Smoker.o sync.o isync.o
 	$(CXX) -o $@ $(LDFLAGS) $^
 
-Agent.o: Agent.cpp ../include/names.h ../include/sync.h
+$(BUILDDIR)/names.o: names.cpp names.h
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+
+$(BUILDDIR)/sync.o: sync.cpp sync.h isync.h
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+
+$(BUILDDIR)/isync.o: isync.cpp isync.h
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+
+$(BUILDDIR)/DeleteSemSmokers.o: DeleteSemSmokers.cpp names.h sync.h isync.h
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+
+$(BUILDDIR)/Smoker.o: Smoker.cpp sync.h isync.h
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+
+$(BUILDDIR)/Agent.o: Agent.cpp names.h sync.h isync.h
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+
+.PHONY: clean
 
 clean:
-	rm -f src/*.o src/*.*~ include/*.*~ *~
+	rm -f $(SRCDIR)/*.cpp~ $(INCLUDE)/*.h~ makefile~
+	rm -f -R $(BUILDDIR)
+	rm -f -R $(BINDIR)
+
+.PHONY: dirs
+dirs:
+	@test -d build || mkdir build
+	@test -d bin || mkdir bin

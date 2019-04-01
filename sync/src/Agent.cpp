@@ -7,12 +7,12 @@
 
 using namespace std;
 
-static void agent(Sync *[]);
+static void agent(ISync *[]);
 
 int
 main(void) {
 
-  Sync *sems[nSEM];
+  ISync *sems[nSEM];
 
   try {
     for (int i = 0; i < nSEM; ++i) {
@@ -31,7 +31,7 @@ main(void) {
 }
 
 
-static void agent(Sync *sems[]) {
+static void agent(ISync *sems[]) {
 
   for (;;) {
     cout << "Offering" << endl;
